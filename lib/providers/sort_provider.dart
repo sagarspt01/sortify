@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import '../algorithms/bubble_sort.dart';
 import '../algorithms/quick_sort.dart';
 import '../algorithms/merge_sort.dart';
+import '../algorithms/insertion_sort.dart';
+import '../algorithms/selection_sort.dart';
+import '../algorithms/radix_sort.dart';
+import '../algorithms/heap_sort.dart';
 
-enum SortType { bubble, quick, merge }
+enum SortType { bubble, quick, merge, insertion, selection, radix, heap }
 
 class SortProvider extends ChangeNotifier {
   List<int> _original = [];
@@ -14,7 +18,6 @@ class SortProvider extends ChangeNotifier {
   int _swapCount = 0;
   String _summary = "";
   SortType _currentType = SortType.bubble;
-
   bool _popupShown = false;
 
   // Getters
@@ -60,20 +63,31 @@ class SortProvider extends ChangeNotifier {
 
     switch (_currentType) {
       case SortType.bubble:
-        _swapCount = await bubbleSort(_steps, () {});
+        _swapCount = await bubbleSort(_steps, notifyListeners);
         break;
       case SortType.quick:
-        _swapCount = await quickSort(_steps, () {});
+        _swapCount = await quickSort(_steps, notifyListeners);
         break;
       case SortType.merge:
-        _swapCount = await mergeSort(_steps, () {});
+        _swapCount = await mergeSort(_steps, notifyListeners);
+        break;
+      case SortType.insertion:
+        _swapCount = await insertionSort(_steps, notifyListeners);
+        break;
+      case SortType.selection:
+        _swapCount = await selectionSort(_steps, notifyListeners);
+        break;
+      case SortType.radix:
+        _swapCount = await radixSort(_steps, notifyListeners);
+        break;
+      case SortType.heap:
+        _swapCount = await heapSort(_steps, notifyListeners);
         break;
     }
 
     stopwatch.stop();
-
     await showGraphSteps();
-    await Future.delayed(const Duration(seconds: 2)); // ⏳ 2-second delay
+    await Future.delayed(const Duration(seconds: 1));
 
     _summary =
         """
@@ -119,22 +133,34 @@ class SortProvider extends ChangeNotifier {
   String getAlgoDetails() {
     switch (_currentType) {
       case SortType.bubble:
-        return "Bubble Sort compares adjacent elements and swaps them if they are in the wrong order. Time Complexity: O(n²).";
+        return "Bubble Sort compares adjacent elements and swaps them if needed. Time Complexity: O(n²).";
       case SortType.quick:
-        return "Quick Sort uses divide-and-conquer. Picks a pivot and recursively sorts partitions. Average time: O(n log n).";
+        return "Quick Sort uses divide-and-conquer and recursively sorts partitions. Avg Time: O(n log n).";
       case SortType.merge:
-        return "Merge Sort splits the list, sorts the halves, and merges them. Time Complexity: O(n log n).";
+        return "Merge Sort divides the array and merges sorted halves. Time Complexity: O(n log n).";
+      case SortType.insertion:
+        return "Insertion Sort builds the sorted list one item at a time. Time Complexity: O(n²).";
+      case SortType.selection:
+        return "Selection Sort finds the minimum and places it in the correct position. Time Complexity: O(n²).";
+      case SortType.radix:
+        return "Radix Sort processes digits from LSB to MSB. Efficient for integers. Time Complexity: O(nk).";
+      case SortType.heap:
+        return "Heap Sort builds a max-heap and extracts max repeatedly. Time Complexity: O(n log n).";
     }
   }
 
   String _getTimeComplexity(SortType type) {
     switch (type) {
       case SortType.bubble:
+      case SortType.insertion:
+      case SortType.selection:
         return "O(n²)";
       case SortType.quick:
-        return "O(n log n)";
       case SortType.merge:
+      case SortType.heap:
         return "O(n log n)";
+      case SortType.radix:
+        return "O(nk)";
     }
   }
 }

@@ -84,7 +84,6 @@ class SortVisualizerPage extends StatelessWidget {
                     );
                   },
                 ),
-                // Add others similarly
               ],
             ),
           ),
@@ -103,16 +102,18 @@ class SortVisualizerPage extends StatelessWidget {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.end,
-                                children: values
-                                    .map(
-                                      (val) => BarWidget(
-                                        key: ValueKey(val),
-                                        value: val,
-                                        maxHeight: maxBarHeight,
-                                        barWidth: barWidth.toDouble(),
-                                      ),
-                                    )
-                                    .toList(),
+                                children: values.asMap().entries.map((entry) {
+                                  int index = entry.key;
+                                  int value = entry.value;
+                                  return BarWidget(
+                                    key: ValueKey(
+                                      'bar_${index}_$value',
+                                    ), // unique key
+                                    value: value,
+                                    maxHeight: maxBarHeight,
+                                    barWidth: barWidth.toDouble(),
+                                  );
+                                }).toList(),
                               ),
                             ),
                           ),
