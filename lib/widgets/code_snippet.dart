@@ -16,57 +16,103 @@ class CodeSnippetTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TabBar(
-            isScrollable: true,
-            labelColor: Theme.of(context).colorScheme.primary,
-            tabs: codeMap.keys.map((lang) => Tab(text: lang)).toList(),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF0F0C29),
+                  Color(0xFF302B63),
+                  Color(0xFF24243e),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: TabBar(
+              isScrollable: true,
+              labelColor: Colors.purpleAccent,
+              unselectedLabelColor: Colors.white60,
+              indicator: const UnderlineTabIndicator(
+                borderSide: BorderSide(width: 3.0, color: Colors.purpleAccent),
+                insets: EdgeInsets.symmetric(horizontal: 16),
+              ),
+              indicatorSize: TabBarIndicatorSize.label,
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              tabs: codeMap.keys.map((lang) {
+                return Tab(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Text(lang),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
+
+          const SizedBox(height: 12),
+
           SizedBox(
-            height: screenHeight * 0.4, // 40% of screen height
-            width: screenWidth * 0.95, // 95% of screen width
+            height: screenHeight * 0.4,
+            width: screenWidth * 0.95,
             child: TabBarView(
               children: codeMap.entries.map((entry) {
-                final scrollController = ScrollController(); // ✅ Add controller
-
                 return Stack(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(16),
                       margin: const EdgeInsets.only(top: 12),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.black),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF1F1C2C), Color(0xFF928DAB)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.purpleAccent.withOpacity(0.4),
+                            blurRadius: 16,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                        border: Border.all(color: Colors.white12),
                       ),
                       child: Scrollbar(
-                        controller: scrollController,
                         thumbVisibility: true,
                         child: SingleChildScrollView(
-                          controller: scrollController,
                           scrollDirection: Axis.horizontal,
                           child: SelectableText(
                             entry.value,
                             style: const TextStyle(
                               fontFamily: 'monospace',
                               fontSize: 13,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       ),
                     ),
+
                     Positioned(
                       top: 0,
                       right: 0,
                       child: IconButton(
                         icon: const Icon(Icons.copy, size: 20),
                         tooltip: 'Copy code',
+                        color: Colors.white70,
                         onPressed: () {
                           Clipboard.setData(ClipboardData(text: entry.value));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('${entry.key} code copied!'),
-                              duration: const Duration(seconds: 1),
+                              backgroundColor: Colors.purpleAccent.shade200,
                             ),
                           );
                         },

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:sortify/snippets/bubble_sort_c.dart';
-import 'package:sortify/snippets/bubble_sort_cpp.dart';
-import 'package:sortify/snippets/bubble_sort_python.dart';
+import 'package:sortify/snippets/radix_sort_c.dart';
+import 'package:sortify/snippets/radix_sort_cpp.dart';
+import 'package:sortify/snippets/radix_sort_python.dart';
 import 'package:sortify/widgets/code_snippet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class BubbleSortInfoPage extends StatefulWidget {
-  const BubbleSortInfoPage({super.key});
+class RadixSortInfoPage extends StatefulWidget {
+  const RadixSortInfoPage({super.key});
 
   @override
-  State<BubbleSortInfoPage> createState() => _BubbleSortInfoPageState();
+  State<RadixSortInfoPage> createState() => _RadixSortInfoPageState();
 }
 
-class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
+class _RadixSortInfoPageState extends State<RadixSortInfoPage> {
   final ScrollController _scrollController = ScrollController();
 
   static final Uri _url = Uri.parse(
-    'https://www.geeksforgeeks.org/bubble-sort/',
+    'https://www.geeksforgeeks.org/radix-sort/',
   );
 
   Future<void> _launchURL(BuildContext context) async {
@@ -48,16 +48,16 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
   @override
   Widget build(BuildContext context) {
     final codeMap = {
-      'C': bubbleSortC,
-      'C++': bubbleSortCpp,
-      'Python': bubbleSortPython,
+      'C': radixSortC,
+      'C++': radixSortCpp,
+      'Python': radixSortPython,
     };
 
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF0F0C29), Color(0xFF302B63), Color(0xFF24243e)],
+            colors: [Color(0xFF141E30), Color(0xFF243B55)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -74,19 +74,19 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Bubble Sort",
+                    "Radix Sort",
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       shadows: [
-                        Shadow(color: Colors.purpleAccent, blurRadius: 12),
+                        Shadow(color: Colors.tealAccent, blurRadius: 12),
                       ],
                     ),
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    "Bubble Sort is a simple comparison-based algorithm where each pair of adjacent elements is compared, and swapped if they are in the wrong order.",
+                    "Radix Sort is a non-comparative sorting algorithm that sorts integers by processing individual digits. It uses counting sort as a subroutine to sort based on digit places.",
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -94,32 +94,33 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent,
+                      color: Colors.tealAccent,
                     ),
                   ),
                   const SizedBox(height: 8),
                   const SelectableText('''
-repeat (n - 1) times:
-    for i from 0 to n - 2:
-        if element[i] > element[i + 1]:
-            swap(element[i], element[i + 1])
+function radixSort(arr):
+    maxVal = findMaximum(arr)
+    exp = 1
+    while maxVal / exp > 0:
+        countingSortByDigit(arr, exp)
+        exp *= 10
 ''', style: TextStyle(fontFamily: 'monospace', color: Colors.white)),
                   const SizedBox(height: 24),
                   const Text(
-                    "Step-by-step Example (Input: [5, 3, 8, 4, 2]):",
+                    "Step-by-step Example (Input: [170, 45, 75, 90, 802, 24, 2, 66]):",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent,
+                      color: Colors.tealAccent,
                     ),
                   ),
                   const SizedBox(height: 8),
                   const SelectableText('''
-Pass 1: [3, 5, 4, 2, 8]
-Pass 2: [3, 4, 2, 5, 8]
-Pass 3: [3, 2, 4, 5, 8]
-Pass 4: [2, 3, 4, 5, 8]
-Output: [2, 3, 4, 5, 8]
+Sort by 1s place: [170, 90, 802, 2, 24, 45, 75, 66]
+Sort by 10s place: [802, 2, 24, 45, 66, 170, 75, 90]
+Sort by 100s place: [2, 24, 45, 66, 75, 90, 170, 802]
+Output: [2, 24, 45, 66, 75, 90, 170, 802]
 ''', style: TextStyle(fontFamily: 'monospace', color: Colors.white)),
                   const SizedBox(height: 24),
                   const Text(
@@ -127,7 +128,7 @@ Output: [2, 3, 4, 5, 8]
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent,
+                      color: Colors.tealAccent,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -141,9 +142,7 @@ Output: [2, 3, 4, 5, 8]
                     ),
                   ),
                   const Text(
-                    "Best Case: O(n) (already sorted)\n"
-                    "Average Case: O(n²)\n"
-                    "Worst Case: O(n²)",
+                    "Best/Average/Worst Case: O(nk), where k is the number of digits",
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -153,14 +152,14 @@ Output: [2, 3, 4, 5, 8]
                       color: Colors.white,
                     ),
                   ),
-                  const Text("O(1) — In-place sorting"),
+                  const Text("O(n + k) — for counting sort usage"),
                   const SizedBox(height: 24),
                   const Text(
                     "Advantages & Disadvantages:",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent,
+                      color: Colors.tealAccent,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -200,11 +199,15 @@ Output: [2, 3, 4, 5, 8]
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Simple to implement'),
+                            child: Text(
+                              'Efficient for large datasets with small digit range',
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Inefficient on large datasets'),
+                            child: Text(
+                              'Not suitable for floating-point numbers or negative numbers',
+                            ),
                           ),
                         ],
                       ),
@@ -212,11 +215,13 @@ Output: [2, 3, 4, 5, 8]
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Good for small datasets'),
+                            child: Text('Linear time complexity in many cases'),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('High time complexity (O(n²))'),
+                            child: Text(
+                              'Requires additional memory for counting sort',
+                            ),
                           ),
                         ],
                       ),
@@ -232,7 +237,7 @@ Output: [2, 3, 4, 5, 8]
                         style: TextStyle(color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purpleAccent,
+                        backgroundColor: Colors.teal,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 14,
@@ -241,7 +246,7 @@ Output: [2, 3, 4, 5, 8]
                           borderRadius: BorderRadius.circular(30),
                         ),
                         elevation: 10,
-                        shadowColor: Colors.purpleAccent,
+                        shadowColor: Colors.teal,
                       ),
                     ),
                   ),

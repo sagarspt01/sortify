@@ -10,70 +10,284 @@ class SortControls extends StatefulWidget {
 }
 
 class _SortControlsState extends State<SortControls> {
-  final controller = TextEditingController();
+  final TextEditingController controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+  bool _showAlgorithms = true;
+
+  @override
+  void initState() {
+    super.initState();
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        setState(() => _showAlgorithms = false);
+      }
+    });
+  }
 
   @override
   void dispose() {
     controller.dispose();
+    focusNode.dispose();
     super.dispose();
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.black87,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: const Text(
+          "Input Error",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<SortProvider>(context);
+    final isSorting = provider.isSorting;
+    final sortTypes = SortType.values;
 
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.black,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF0F0C29), Color(0xFF302B63)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Input field
           TextField(
             controller: controller,
-            decoration: const InputDecoration(
-              hintText: 'Enter numbers separated by commas (e.g. 5, 8, 3)',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButton<SortType>(
-                  isExpanded: true,
-                  value: provider.currentType,
-                  onChanged: (val) {
-                    if (val != null) provider.setSortType(val);
-                  },
-                  items: SortType.values.map((type) {
-                    return DropdownMenuItem(
-                      value: type,
-                      child: Text(type.name.toUpperCase()),
-                    );
-                  }).toList(),
+            focusNode: focusNode,
+            enabled: !isSorting,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              hintText: 'Enter numbers (e.g., 5, 8, 3)',
+              hintStyle: const TextStyle(color: Colors.white54),
+              filled: true,
+              fillColor: Colors.black,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.pinkAccent),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Colors.lightBlueAccent,
+                  width: 2,
                 ),
               ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () {
-                  final values = controller.text
-                      .split(',')
-                      .map((e) => int.tryParse(e.trim()))
-                      .where((e) => e != null)
-                      .map((e) => e!)
-                      .toList();
-                  provider.setInput(values);
-                },
-                child: const Text("Show Graph"),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.clear, color: Colors.white70),
+                onPressed: () => controller.clear(),
               ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: provider.sort,
-                child: const Text("Sort"),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Toggle algorithm selection
+          Align(
+            alignment: Alignment.centerRight,
+            child: InkWell(
+              onTap: () {
+                if (focusNode.hasFocus) {
+                  FocusScope.of(context).unfocus();
+                  Future.delayed(const Duration(milliseconds: 300), () {
+                    if (mounted) setState(() => _showAlgorithms = true);
+                  });
+                } else {
+                  setState(() => _showAlgorithms = !_showAlgorithms);
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _showAlgorithms ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.pinkAccent,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    _showAlgorithms ? "Hide Algorithms" : "Choose Algorithm",
+                    style: const TextStyle(
+                      color: Color(0xFFE91E63),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Algorithm Chips with uniform sizing and proper layout
+          AnimatedCrossFade(
+            duration: const Duration(milliseconds: 300),
+            crossFadeState: _showAlgorithms
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            firstChild: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calculate chip width to fit 3 chips per row with spacing
+                  final availableWidth = constraints.maxWidth;
+                  final chipWidth =
+                      (availableWidth - 24) / 3; // 24 for spacing (12 * 2)
+
+                  return Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    alignment: WrapAlignment.spaceEvenly,
+                    children: sortTypes.map((type) {
+                      final isSelected = provider.currentType == type;
+                      return SizedBox(
+                        width: chipWidth,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: isSorting
+                                ? null
+                                : () => provider.setSortType(type),
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? Colors.pinkAccent
+                                    : Colors.grey.shade800,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  type.name.toUpperCase(),
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.white70,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+            ),
+            secondChild: const SizedBox.shrink(),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Buttons Row
+          Row(
+            children: [
+              _buildAnimatedButton(
+                label: "Show Graph",
+                color: Colors.blueAccent,
+                onPressed: isSorting
+                    ? null
+                    : () {
+                        final input = controller.text;
+                        final values = input
+                            .split(',')
+                            .map((e) => int.tryParse(e.trim()))
+                            .whereType<int>()
+                            .toList();
+
+                        if (input.trim().isEmpty || values.isEmpty) {
+                          _showError("Please enter valid numbers.");
+                          return;
+                        }
+
+                        provider.setInput(values);
+                      },
+              ),
+              const SizedBox(width: 12),
+              _buildAnimatedButton(
+                label: "Sort",
+                color: Colors.pinkAccent,
+                onPressed: isSorting
+                    ? null
+                    : () {
+                        final input = controller.text;
+                        final values = input
+                            .split(',')
+                            .map((e) => int.tryParse(e.trim()))
+                            .whereType<int>()
+                            .toList();
+
+                        if (input.trim().isEmpty || values.isEmpty) {
+                          _showError("Please enter valid numbers.");
+                          return;
+                        }
+
+                        if (provider.currentType == null) {
+                          _showError("Please select a sorting algorithm.");
+                          return;
+                        }
+
+                        provider.setInput(values);
+                        provider.sort();
+                      },
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAnimatedButton({
+    required String label,
+    required Color color,
+    required VoidCallback? onPressed,
+  }) {
+    return Expanded(
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 1.0, end: onPressed == null ? 1.0 : 1.03),
+        duration: const Duration(milliseconds: 300),
+        builder: (context, scale, child) {
+          return Transform.scale(
+            scale: scale,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: color,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 6,
+              ),
+              child: Text(label, style: const TextStyle(fontSize: 16)),
+            ),
+          );
+        },
       ),
     );
   }

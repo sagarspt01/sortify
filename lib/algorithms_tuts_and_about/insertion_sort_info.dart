@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:sortify/snippets/bubble_sort_c.dart';
-import 'package:sortify/snippets/bubble_sort_cpp.dart';
-import 'package:sortify/snippets/bubble_sort_python.dart';
+import 'package:sortify/snippets/insertion_sort_c.dart';
+import 'package:sortify/snippets/insertion_sort_cpp.dart';
+import 'package:sortify/snippets/insertion_sort_python.dart';
 import 'package:sortify/widgets/code_snippet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class BubbleSortInfoPage extends StatefulWidget {
-  const BubbleSortInfoPage({super.key});
+class InsertionSortInfoPage extends StatefulWidget {
+  const InsertionSortInfoPage({super.key});
 
   @override
-  State<BubbleSortInfoPage> createState() => _BubbleSortInfoPageState();
+  State<InsertionSortInfoPage> createState() => _InsertionSortInfoPageState();
 }
 
-class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
+class _InsertionSortInfoPageState extends State<InsertionSortInfoPage> {
   final ScrollController _scrollController = ScrollController();
 
   static final Uri _url = Uri.parse(
-    'https://www.geeksforgeeks.org/bubble-sort/',
+    'https://www.geeksforgeeks.org/insertion-sort/',
   );
 
   Future<void> _launchURL(BuildContext context) async {
@@ -48,9 +48,9 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
   @override
   Widget build(BuildContext context) {
     final codeMap = {
-      'C': bubbleSortC,
-      'C++': bubbleSortCpp,
-      'Python': bubbleSortPython,
+      'C': selectionSortC,
+      'C++': insertionSortCpp,
+      'Python': insertionSortPython,
     };
 
     return Scaffold(
@@ -74,7 +74,7 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Bubble Sort",
+                    "Insertion Sort",
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -86,7 +86,8 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    "Bubble Sort is a simple comparison-based algorithm where each pair of adjacent elements is compared, and swapped if they are in the wrong order.",
+                    "Insertion Sort is a simple sorting algorithm that builds the final sorted array one item at a time. "
+                    "It is much less efficient on large lists than more advanced algorithms such as quicksort, heapsort, or merge sort.",
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -99,10 +100,13 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                   ),
                   const SizedBox(height: 8),
                   const SelectableText('''
-repeat (n - 1) times:
-    for i from 0 to n - 2:
-        if element[i] > element[i + 1]:
-            swap(element[i], element[i + 1])
+for i = 1 to length(A) - 1:
+    key = A[i]
+    j = i - 1
+    while j >= 0 and A[j] > key:
+        A[j + 1] = A[j]
+        j = j - 1
+    A[j + 1] = key
 ''', style: TextStyle(fontFamily: 'monospace', color: Colors.white)),
                   const SizedBox(height: 24),
                   const Text(
@@ -115,10 +119,10 @@ repeat (n - 1) times:
                   ),
                   const SizedBox(height: 8),
                   const SelectableText('''
-Pass 1: [3, 5, 4, 2, 8]
-Pass 2: [3, 4, 2, 5, 8]
-Pass 3: [3, 2, 4, 5, 8]
-Pass 4: [2, 3, 4, 5, 8]
+i=1 → [3, 5, 8, 4, 2]
+i=2 → [3, 5, 8, 4, 2]
+i=3 → [3, 4, 5, 8, 2]
+i=4 → [2, 3, 4, 5, 8]
 Output: [2, 3, 4, 5, 8]
 ''', style: TextStyle(fontFamily: 'monospace', color: Colors.white)),
                   const SizedBox(height: 24),
@@ -200,11 +204,11 @@ Output: [2, 3, 4, 5, 8]
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Simple to implement'),
+                            child: Text('Simple to understand and implement'),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Inefficient on large datasets'),
+                            child: Text('Inefficient for large lists'),
                           ),
                         ],
                       ),
@@ -212,11 +216,11 @@ Output: [2, 3, 4, 5, 8]
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Good for small datasets'),
+                            child: Text('Efficient for small data sets'),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('High time complexity (O(n²))'),
+                            child: Text('O(n²) in worst case'),
                           ),
                         ],
                       ),

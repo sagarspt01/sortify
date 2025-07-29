@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:sortify/snippets/bubble_sort_c.dart';
-import 'package:sortify/snippets/bubble_sort_cpp.dart';
-import 'package:sortify/snippets/bubble_sort_python.dart';
+import 'package:sortify/snippets/quick_sort_c.dart';
+import 'package:sortify/snippets/quick_sort_cpp.dart';
+import 'package:sortify/snippets/quick_sort_python.dart';
 import 'package:sortify/widgets/code_snippet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class BubbleSortInfoPage extends StatefulWidget {
-  const BubbleSortInfoPage({super.key});
+class QuickSortInfoPage extends StatefulWidget {
+  const QuickSortInfoPage({super.key});
 
   @override
-  State<BubbleSortInfoPage> createState() => _BubbleSortInfoPageState();
+  State<QuickSortInfoPage> createState() => _QuickSortInfoPageState();
 }
 
-class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
+class _QuickSortInfoPageState extends State<QuickSortInfoPage> {
   final ScrollController _scrollController = ScrollController();
 
   static final Uri _url = Uri.parse(
-    'https://www.geeksforgeeks.org/bubble-sort/',
+    'https://www.geeksforgeeks.org/quick-sort/',
   );
 
   Future<void> _launchURL(BuildContext context) async {
@@ -48,16 +48,16 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
   @override
   Widget build(BuildContext context) {
     final codeMap = {
-      'C': bubbleSortC,
-      'C++': bubbleSortCpp,
-      'Python': bubbleSortPython,
+      'C': quickSortC,
+      'C++': quickSortCpp,
+      'Python': quickSortPython,
     };
 
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF0F0C29), Color(0xFF302B63), Color(0xFF24243e)],
+            colors: [Color(0xFF1D2B64), Color(0xFFF8CDDA)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -74,19 +74,19 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Bubble Sort",
+                    "Quick Sort",
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       shadows: [
-                        Shadow(color: Colors.purpleAccent, blurRadius: 12),
+                        Shadow(color: Colors.redAccent, blurRadius: 12),
                       ],
                     ),
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    "Bubble Sort is a simple comparison-based algorithm where each pair of adjacent elements is compared, and swapped if they are in the wrong order.",
+                    "Quick Sort is a divide-and-conquer algorithm. It picks an element as a pivot and partitions the array around the picked pivot.",
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -94,32 +94,42 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent,
+                      color: Colors.redAccent,
                     ),
                   ),
                   const SizedBox(height: 8),
                   const SelectableText('''
-repeat (n - 1) times:
-    for i from 0 to n - 2:
-        if element[i] > element[i + 1]:
-            swap(element[i], element[i + 1])
+function quickSort(arr, low, high):
+    if low < high:
+        pi = partition(arr, low, high)
+        quickSort(arr, low, pi - 1)
+        quickSort(arr, pi + 1, high)
+
+function partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j = low to high - 1:
+        if arr[j] < pivot:
+            i++
+            swap arr[i] with arr[j]
+    swap arr[i + 1] with arr[high]
+    return i + 1
 ''', style: TextStyle(fontFamily: 'monospace', color: Colors.white)),
                   const SizedBox(height: 24),
                   const Text(
-                    "Step-by-step Example (Input: [5, 3, 8, 4, 2]):",
+                    "Step-by-step Example (Input: [10, 7, 8, 9, 1, 5]):",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent,
+                      color: Colors.redAccent,
                     ),
                   ),
                   const SizedBox(height: 8),
                   const SelectableText('''
-Pass 1: [3, 5, 4, 2, 8]
-Pass 2: [3, 4, 2, 5, 8]
-Pass 3: [3, 2, 4, 5, 8]
-Pass 4: [2, 3, 4, 5, 8]
-Output: [2, 3, 4, 5, 8]
+Initial Array: [10, 7, 8, 9, 1, 5]
+Pivot: 5 → Partition → [1, 5, 10, 7, 8, 9]
+Recursive Sort on [1] and [10, 7, 8, 9]
+Final Sorted: [1, 5, 7, 8, 9, 10]
 ''', style: TextStyle(fontFamily: 'monospace', color: Colors.white)),
                   const SizedBox(height: 24),
                   const Text(
@@ -127,7 +137,7 @@ Output: [2, 3, 4, 5, 8]
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent,
+                      color: Colors.redAccent,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -141,9 +151,9 @@ Output: [2, 3, 4, 5, 8]
                     ),
                   ),
                   const Text(
-                    "Best Case: O(n) (already sorted)\n"
-                    "Average Case: O(n²)\n"
-                    "Worst Case: O(n²)",
+                    "Best Case: O(n log n)\n"
+                    "Average Case: O(n log n)\n"
+                    "Worst Case: O(n²) (if pivot is always smallest or largest)",
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -153,14 +163,14 @@ Output: [2, 3, 4, 5, 8]
                       color: Colors.white,
                     ),
                   ),
-                  const Text("O(1) — In-place sorting"),
+                  const Text("O(log n) auxiliary space (due to recursion)"),
                   const SizedBox(height: 24),
                   const Text(
                     "Advantages & Disadvantages:",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amberAccent,
+                      color: Colors.redAccent,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -200,11 +210,13 @@ Output: [2, 3, 4, 5, 8]
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Simple to implement'),
+                            child: Text(
+                              'Faster in practice than other O(n log n) algorithms',
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Inefficient on large datasets'),
+                            child: Text('Unstable and worst-case is O(n²)'),
                           ),
                         ],
                       ),
@@ -212,11 +224,15 @@ Output: [2, 3, 4, 5, 8]
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Good for small datasets'),
+                            child: Text(
+                              'In-place, requires little extra memory',
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('High time complexity (O(n²))'),
+                            child: Text(
+                              'Not stable (order of equal elements may change)',
+                            ),
                           ),
                         ],
                       ),
@@ -232,7 +248,7 @@ Output: [2, 3, 4, 5, 8]
                         style: TextStyle(color: Colors.white),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purpleAccent,
+                        backgroundColor: Colors.redAccent,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 14,
@@ -241,7 +257,7 @@ Output: [2, 3, 4, 5, 8]
                           borderRadius: BorderRadius.circular(30),
                         ),
                         elevation: 10,
-                        shadowColor: Colors.purpleAccent,
+                        shadowColor: Colors.redAccent,
                       ),
                     ),
                   ),

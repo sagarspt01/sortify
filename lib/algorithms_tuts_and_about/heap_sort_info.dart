@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:sortify/snippets/bubble_sort_c.dart';
-import 'package:sortify/snippets/bubble_sort_cpp.dart';
-import 'package:sortify/snippets/bubble_sort_python.dart';
+import 'package:sortify/snippets/heap_sort_c.dart';
+import 'package:sortify/snippets/heap_sort_cpp.dart';
+import 'package:sortify/snippets/heap_sort_python.dart';
 import 'package:sortify/widgets/code_snippet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class BubbleSortInfoPage extends StatefulWidget {
-  const BubbleSortInfoPage({super.key});
+class HeapSortInfoPage extends StatefulWidget {
+  const HeapSortInfoPage({super.key});
 
   @override
-  State<BubbleSortInfoPage> createState() => _BubbleSortInfoPageState();
+  State<HeapSortInfoPage> createState() => _HeapSortInfoPageState();
 }
 
-class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
+class _HeapSortInfoPageState extends State<HeapSortInfoPage> {
   final ScrollController _scrollController = ScrollController();
 
-  static final Uri _url = Uri.parse(
-    'https://www.geeksforgeeks.org/bubble-sort/',
-  );
+  static final Uri _url = Uri.parse('https://www.geeksforgeeks.org/heap-sort/');
 
   Future<void> _launchURL(BuildContext context) async {
     try {
@@ -48,9 +46,9 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
   @override
   Widget build(BuildContext context) {
     final codeMap = {
-      'C': bubbleSortC,
-      'C++': bubbleSortCpp,
-      'Python': bubbleSortPython,
+      'C': heapSortC,
+      'C++': heapSortCpp,
+      'Python': heapSortPython,
     };
 
     return Scaffold(
@@ -74,7 +72,7 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Bubble Sort",
+                    "Heap Sort",
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -86,7 +84,7 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    "Bubble Sort is a simple comparison-based algorithm where each pair of adjacent elements is compared, and swapped if they are in the wrong order.",
+                    "Heap Sort is a comparison-based sorting algorithm that uses a binary heap data structure. It works by converting the array into a max heap and repeatedly extracting the maximum element.",
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -99,14 +97,14 @@ class _BubbleSortInfoPageState extends State<BubbleSortInfoPage> {
                   ),
                   const SizedBox(height: 8),
                   const SelectableText('''
-repeat (n - 1) times:
-    for i from 0 to n - 2:
-        if element[i] > element[i + 1]:
-            swap(element[i], element[i + 1])
+buildMaxHeap(arr)
+for i from n - 1 downto 1:
+    swap arr[0] with arr[i]
+    heapify(arr, 0, i)
 ''', style: TextStyle(fontFamily: 'monospace', color: Colors.white)),
                   const SizedBox(height: 24),
                   const Text(
-                    "Step-by-step Example (Input: [5, 3, 8, 4, 2]):",
+                    "Step-by-step Example (Input: [4, 10, 3, 5, 1]):",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -115,11 +113,12 @@ repeat (n - 1) times:
                   ),
                   const SizedBox(height: 8),
                   const SelectableText('''
-Pass 1: [3, 5, 4, 2, 8]
-Pass 2: [3, 4, 2, 5, 8]
-Pass 3: [3, 2, 4, 5, 8]
-Pass 4: [2, 3, 4, 5, 8]
-Output: [2, 3, 4, 5, 8]
+Build Max Heap: [10, 5, 3, 4, 1]
+Remove 10: [5, 4, 3, 1, 10]
+Remove 5: [4, 1, 3, 5, 10]
+Remove 4: [3, 1, 4, 5, 10]
+Remove 3: [1, 3, 4, 5, 10]
+Output: [1, 3, 4, 5, 10]
 ''', style: TextStyle(fontFamily: 'monospace', color: Colors.white)),
                   const SizedBox(height: 24),
                   const Text(
@@ -141,9 +140,9 @@ Output: [2, 3, 4, 5, 8]
                     ),
                   ),
                   const Text(
-                    "Best Case: O(n) (already sorted)\n"
-                    "Average Case: O(n²)\n"
-                    "Worst Case: O(n²)",
+                    "Best Case: O(n log n)\n"
+                    "Average Case: O(n log n)\n"
+                    "Worst Case: O(n log n)",
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -200,11 +199,11 @@ Output: [2, 3, 4, 5, 8]
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Simple to implement'),
+                            child: Text('In-place, no extra memory'),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Inefficient on large datasets'),
+                            child: Text('Not stable'),
                           ),
                         ],
                       ),
@@ -212,11 +211,11 @@ Output: [2, 3, 4, 5, 8]
                         children: [
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('Good for small datasets'),
+                            child: Text('Consistent O(n log n) time'),
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text('High time complexity (O(n²))'),
+                            child: Text('Not adaptive to input'),
                           ),
                         ],
                       ),
