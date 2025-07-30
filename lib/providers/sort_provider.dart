@@ -86,8 +86,8 @@ class SortProvider extends ChangeNotifier {
     }
 
     stopwatch.stop();
-    // await showGraphSteps();
-    // await Future.delayed(const Duration(seconds: 1));
+    await showGraphSteps();
+    await Future.delayed(const Duration(seconds: 1));
 
     _summary =
         """
