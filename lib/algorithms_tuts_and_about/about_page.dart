@@ -6,12 +6,25 @@ class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   void _launchGitHub() async {
-    final Uri url = Uri.parse(
-      "https://github.com/yourusername/sortify",
-    ); // Update with your GitHub link
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+    final Uri url = Uri.parse("https://github.com/sagarspt01");
+
+    try {
+      // First try to launch with external application mode
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        // If external application mode fails, try platform default
+        await launchUrl(url, mode: LaunchMode.platformDefault);
+      }
+    } catch (e) {
+      // Show error dialog if URL launching fails
+      _showErrorDialog();
     }
+  }
+
+  void _showErrorDialog() {
+    // Note: This requires a BuildContext, so we'll handle it differently
+    debugPrint('Failed to launch URL: https://github.com/sagarspt01');
   }
 
   @override
@@ -117,10 +130,74 @@ class AboutPage extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // GitHub Button
+            // GitHub Button with improved error handling
             Center(
               child: ElevatedButton.icon(
-                onPressed: _launchGitHub,
+                onPressed: () async {
+                  final Uri url = Uri.parse("https://github.com/sagarspt01");
+
+                  try {
+                    // Try different launch modes
+                    bool launched = false;
+
+                    // First try external application
+                    if (await canLaunchUrl(url)) {
+                      launched = await launchUrl(
+                        url,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+
+                    // If that fails, try platform default
+                    if (!launched) {
+                      launched = await launchUrl(
+                        url,
+                        mode: LaunchMode.platformDefault,
+                      );
+                    }
+
+                    // If still fails, try in-app web view
+                    if (!launched) {
+                      launched = await launchUrl(
+                        url,
+                        mode: LaunchMode.inAppWebView,
+                      );
+                    }
+
+                    if (!launched) {
+                      throw Exception('Could not launch URL');
+                    }
+                  } catch (e) {
+                    // Show error dialog with context
+                    if (context.mounted) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.grey.shade900,
+                            title: const Text(
+                              'Error',
+                              style: TextStyle(color: Colors.purpleAccent),
+                            ),
+                            content: const Text(
+                              'Could not open GitHub link. Please visit:\nhttps://github.com/sagarspt01',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text(
+                                  'OK',
+                                  style: TextStyle(color: Colors.purpleAccent),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  }
+                },
                 icon: const Icon(Icons.link, color: Colors.white),
                 label: const Text(
                   "View on GitHub",

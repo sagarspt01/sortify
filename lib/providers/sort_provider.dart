@@ -86,16 +86,16 @@ class SortProvider extends ChangeNotifier {
     }
 
     stopwatch.stop();
-    await showGraphSteps();
-    await Future.delayed(const Duration(seconds: 1));
+    // await showGraphSteps();
+    // await Future.delayed(const Duration(seconds: 1));
 
     _summary =
         """
-🔢 Input: ${_original.join(', ')}
-🔀 Sorted using: ${_currentType.name.toUpperCase()} Sort
-🧮 Time Complexity: ${_getTimeComplexity(_currentType)}
-🔁 Swaps: $_swapCount
-⏱ Time Taken: ${stopwatch.elapsed.inMilliseconds} ms
+ Input: ${_original.join(', ')}
+ Sorted using: ${_currentType.name.toUpperCase()} Sort
+ Time Complexity: ${_getTimeComplexity(_currentType)}
+ Swaps: $_swapCount
+ Time Taken: ${stopwatch.elapsed.inMilliseconds} ms
 """;
 
     _isSorting = false;
